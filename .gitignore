@@ -47,6 +47,15 @@ runs/
 .pydevproject
 .settings/
 
+# Color Calibration & Training Data (bisa besar, jangan di-commit)
+color_samples/
+color_samples/*.npy
+*.backup_*
+
+# Custom Dataset (gambar & label training)
+dataset/
+dataset_*/
+
 # OS metadata
 .DS_Store
 Thumbs.db

@@ -21,9 +21,21 @@ from color_utils import detect_dominant_color
 def run(model_path: str, conf: float, camera_index: int):
     model = YOLO(model_path)
 
-    cap = cv2.VideoCapture(camera_index)
+    # Pakai DirectShow (lebih stabil di Windows dibanding MSMF default)
+    cap = cv2.VideoCapture(camera_index, cv2.CAP_DSHOW)
     if not cap.isOpened():
         raise RuntimeError(f"Tidak bisa membuka kamera index {camera_index}")
+
+    # Set codec MJPG — fix untuk bug garis-garis/artefak pada kebanyakan webcam Windows
+    cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*"MJPG"))
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+    cap.set(cv2.CAP_PROP_FPS, 30)
+
+    # Warm-up: baca & buang frame awal agar sensor kamera stabil
+    print("Menginisialisasi kamera...")
+    for _ in range(30):
+        cap.read()
 
     print("Kamera aktif. Tekan 'q' untuk keluar.")
 

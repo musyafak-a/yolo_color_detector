@@ -192,3 +192,149 @@ python detect_image.py --source contoh.jpg --model runs/detect/train/weights/bes
   ambil sample warna asli barangmu pakai color picker untuk cek nilai HSV-nya.
 - **Deteksi terlalu banyak salah (false positive)** → naikkan `--conf`
   misal ke `0.5` atau `0.6`.
+
+---
+
+## 8. Membuat Training Data Sendiri (Kalibrasi & Custom Object)
+
+Untuk meningkatkan akurasi, project ini menyediakan 4 tool yang bisa digunakan
+secara bertahap tergantung kebutuhan.
+
+### Struktur File Baru
+
+```
+yolo_color_detector/
+├── generate_color_samples.py     # Tool 1: Ambil sample warna dari webcam
+├── auto_calibrate_color.py       # Tool 2: Auto-update HSV ranges
+├── generate_training_dataset.py  # Tool 3: Label objek custom via webcam
+├── train_custom_model.py         # Tool 4: Training YOLO custom
+│
+├── color_samples/                # (di-generate, ada di .gitignore)
+│   ├── merah.npy
+│   ├── biru.npy
+│   └── ...
+└── dataset/                      # (di-generate, ada di .gitignore)
+    ├── train/images/ & labels/
+    ├── valid/images/ & labels/
+    └── data.yaml
+```
+
+---
+
+### JALUR A: Hanya Kalibrasi Warna (Objek sudah ada di kelas COCO)
+
+Gunakan ini kalau objek yang kamu deteksi sudah ada di 80 kelas COCO
+(botol, tas, orang, kursi, dll) tapi warnanya sering salah terdeteksi.
+
+#### Langkah 1 — Ambil sample warna dari kamera
+```bash
+python generate_color_samples.py
+```
+- Kotak kuning muncul di tengah layar
+- Arahkan benda berwarna ke dalam kotak
+- Tekan tombol sesuai warna (`r` = merah, `b` = biru, `h` = hijau, dll)
+- Kumpulkan minimal **5.000–10.000 piksel** per warna (beda cahaya, beda sudut)
+- Tekan `q` kalau sudah selesai
+
+**Tips:** Lakukan di kondisi pencahayaan yang sama seperti saat kamu pakai detectornya.
+
+#### Langkah 2 — Kalibrasi otomatis HSV ranges
+```bash
+python auto_calibrate_color.py           # Apply langsung ke color_utils.py
+python auto_calibrate_color.py --preview # Hanya lihat hasilnya tanpa apply
+```
+- Script menghitung rentang HSV optimal dari sample yang dikumpulkan
+- Backup otomatis dibuat (`color_utils.py.backup_TIMESTAMP`)
+- Ketik `y` untuk konfirmasi update
+
+#### Langkah 3 — Uji akurasi warna
+```bash
+python detect_webcam.py
+```
+
+---
+
+### JALUR B: Training Objek Custom (Objek BUKAN kelas COCO)
+
+Gunakan ini kalau kamu ingin deteksi objek yang tidak ada di dataset COCO,
+seperti kemasan produk spesifik, jenis dompet tertentu, atau objek custom lainnya.
+
+#### Langkah 1 — Buat dataset dari webcam (interaktif)
+```bash
+# Untuk 1 kelas
+python generate_training_dataset.py --classes "nama_objek"
+
+# Untuk beberapa kelas sekaligus
+python generate_training_dataset.py --classes "dompet,botol_custom,kotak_merah"
+```
+
+Di dalam aplikasi:
+1. Tekan `[c]` untuk capture frame dari webcam
+2. **Klik + drag** untuk menggambar bounding box di atas objek
+3. Tekan `[ENTER]` → pilih kelas dengan angka (`0`, `1`, `2`, dst)
+4. Gambar bbox tambahan kalau ada beberapa objek di frame yang sama
+5. Tekan `[ENTER]` lagi (tanpa drag) untuk menyimpan frame
+6. Tekan `[c]` untuk capture frame berikutnya
+7. Tekan `[q]` kalau sudah selesai
+
+**Target dataset:** Minimal **50–100 gambar per kelas** (lebih banyak = lebih akurat).
+
+#### Langkah 2 — Training model
+```bash
+python train_custom_model.py
+python train_custom_model.py --data dataset/data.yaml --epochs 50
+```
+
+- Script otomatis merekomendasikan jumlah epoch
+- Estimasi waktu ditampilkan sebelum training dimulai
+- Ketik `y` untuk mulai training
+- Model hasil training tersimpan di `runs/detect/custom_train/weights/best.pt`
+
+Untuk GPU (lebih cepat):
+```bash
+python train_custom_model.py --device 0   # GPU pertama
+```
+
+#### Langkah 3 — Pakai model hasil training
+```bash
+python detect_webcam.py --model runs/detect/custom_train/weights/best.pt
+python detect_image.py --source foto.jpg --model runs/detect/custom_train/weights/best.pt
+```
+
+#### Langkah 4 — (Opsional) Kalibrasi warna juga
+Jalankan Jalur A untuk menyesuaikan deteksi warna dengan kondisi kamera.
+
+---
+
+### Alur Lengkap (Jalur A + B)
+
+```
+[generate_color_samples.py]  → Kumpulkan sample warna
+          ↓
+[auto_calibrate_color.py]    → Update COLOR_RANGES otomatis
+          ↓
+[generate_training_dataset.py] → Label objek custom
+          ↓
+[train_custom_model.py]      → Training YOLO custom
+          ↓
+[detect_webcam.py --model runs/.../best.pt] → Deteksi dengan model baru
+```
+
+---
+
+### Panduan Kualitas Dataset
+
+| Dataset Size | Kualitas Expected | Rekomendasi |
+|---|---|---|
+| < 50 gambar/kelas | Sangat buruk | Kumpulkan lebih banyak |
+| 50–100 gambar/kelas | Cukup untuk percobaan | Minimal untuk mulai |
+| 100–300 gambar/kelas | Baik | Bagus untuk produksi sederhana |
+| > 300 gambar/kelas | Sangat baik | Ideal |
+
+**Tips mengumpulkan data yang baik:**
+- Variasikan **pencahayaan** (terang, redup, lampu kuning, dll)
+- Variasikan **sudut pandang** (depan, samping, atas)
+- Variasikan **jarak** ke kamera (dekat, sedang, jauh)
+- Variasikan **background** (meja, lantai, dinding berbeda)
+- Sertakan objek yang **saling berdekatan/bertumpuk**
+
