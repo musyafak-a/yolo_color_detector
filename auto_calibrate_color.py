@@ -170,7 +170,7 @@ def update_color_utils(new_ranges: dict, backup: bool = True):
 
 def run(preview_only: bool = False, backup: bool = True):
     all_colors = [
-        "merah", "oranye", "kuning", "hijau", "cyan",
+        "merah", "oranye", "coklat", "kuning", "hijau", "cyan",
         "biru", "ungu", "pink", "putih", "hitam", "abu-abu"
     ]
 
@@ -209,17 +209,18 @@ def run(preview_only: bool = False, backup: bool = True):
 
     # Untuk warna yang tidak ada sample-nya, gunakan range default
     DEFAULT_RANGES = {
-        "merah":   [((0, 70, 50), (10, 255, 255)), ((170, 70, 50), (180, 255, 255))],
-        "oranye":  [((11, 70, 50), (25, 255, 255))],
+        "merah":   [((0, 110, 100), (10, 255, 255)), ((170, 110, 100), (180, 255, 255))],
+        "oranye":  [((11, 110, 100), (25, 255, 255))],
+        "coklat":  [((0, 40, 30), (22, 150, 140)), ((170, 40, 30), (180, 150, 140))],
         "kuning":  [((26, 70, 50), (34, 255, 255))],
         "hijau":   [((35, 50, 50), (85, 255, 255))],
         "cyan":    [((86, 50, 50), (95, 255, 255))],
         "biru":    [((96, 50, 50), (130, 255, 255))],
         "ungu":    [((131, 50, 50), (155, 255, 255))],
-        "pink":    [((156, 50, 50), (169, 255, 255))],
-        "putih":   [((0, 0, 200), (180, 40, 255))],
+        "pink":    [((145, 50, 80), (169, 255, 255)), ((170, 30, 120), (180, 120, 255)), ((0, 30, 120), (10, 120, 255))],
+        "putih":   [((0, 0, 180), (180, 40, 255))],
         "hitam":   [((0, 0, 0), (180, 255, 40))],
-        "abu-abu": [((0, 0, 41), (180, 40, 199))],
+        "abu-abu": [((0, 0, 41), (180, 40, 179))],
     }
 
     for color_name in skipped:

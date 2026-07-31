@@ -41,6 +41,7 @@ SAMPLE_BOX_RATIO = 0.25  # Ukuran kotak sampling relatif terhadap frame (25%)
 KEY_COLOR_MAP = {
     ord("r"): "merah",
     ord("o"): "oranye",
+    ord("j"): "coklat",
     ord("k"): "kuning",
     ord("h"): "hijau",
     ord("c"): "cyan",
@@ -56,6 +57,7 @@ KEY_COLOR_MAP = {
 DISPLAY_COLORS = {
     "merah":   (0, 0, 220),
     "oranye":  (0, 128, 255),
+    "coklat":  (19, 69, 139),
     "kuning":  (0, 215, 255),
     "hijau":   (0, 200, 0),
     "cyan":    (255, 200, 0),
@@ -131,10 +133,10 @@ def draw_ui(frame, sample_counts: dict, last_action: str, last_action_time: floa
                 cv2.FONT_HERSHEY_SIMPLEX, 0.55, (200, 200, 200), 1)
 
     keys_info = [
-        ("r", "Merah"),   ("o", "Oranye"),  ("k", "Kuning"),
-        ("h", "Hijau"),   ("c", "Cyan"),    ("b", "Biru"),
-        ("u", "Ungu"),    ("p", "Pink"),    ("w", "Putih"),
-        ("t", "Hitam"),   ("a", "Abu-abu"),
+        ("r", "Merah"),   ("o", "Oranye"),  ("j", "Coklat"),
+        ("k", "Kuning"),  ("h", "Hijau"),   ("c", "Cyan"),
+        ("b", "Biru"),    ("u", "Ungu"),    ("p", "Pink"),
+        ("w", "Putih"),   ("t", "Hitam"),   ("a", "Abu-abu"),
     ]
 
     for i, (key, label) in enumerate(keys_info):
