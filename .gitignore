@@ -55,6 +55,11 @@ color_samples/*.npy
 # Custom Dataset (gambar & label training)
 dataset/
 dataset_*/
+train/
+valid/
+test/
+*.mp4
+data.yaml
 
 # OS metadata
 .DS_Store

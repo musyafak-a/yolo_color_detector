@@ -90,6 +90,17 @@ pip install -r requirements.txt
 ```
 Ini akan menginstall `ultralytics` (YOLOv8), `opencv-python`, dan `numpy`.
 
+### Langkah 3.5 — Download Dataset (Penting!)
+Project ini mendeteksi buah berdasarkan dataset khusus. Karena ukurannya besar, dataset ini tidak disertakan di GitHub.
+
+Silakan unduh dataset dari tautan berikut:
+**👉 [Download Dataset Fruits dari Roboflow](https://universe.roboflow.com/ece4078group308/fruits-uhv2q/dataset/3)**
+
+**Cara Memasukkan Dataset:**
+1. Buka tautan di atas dan unduh dataset dengan format **YOLOv8**.
+2. Ekstrak file `.zip` yang diunduh.
+3. Pindahkan folder hasil ekstrak (`train/`, `valid/`, `test/`, dan file `data.yaml`) ke dalam direktori root project ini (`yolo_color_detector/`).
+
 ### Langkah 4 — Jalankan deteksi pada gambar
 ```bash
 python detect_image.py --source contoh.jpg

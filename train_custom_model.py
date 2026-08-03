@@ -81,7 +81,7 @@ def run(
     name: str,
 ):
     print("\n" + "=" * 60)
-    print("  TRAIN CUSTOM MODEL — Training YOLOv8")
+    print("  TRAIN CUSTOM MODEL - Training YOLOv8")
     print("=" * 60)
 
     # ── Validasi Dataset ──────────────────────────────────────────────────────
@@ -119,14 +119,14 @@ def run(
     print(f"  Batch size : {batch}")
     print(f"  Device     : {device}")
     print(f"  Output     : {project}/{name}/")
-    print("─" * 60)
+    print("-" * 60)
 
     # Estimasi waktu kasar
     sec_per_epoch = max(5, total_n * 0.05)  # estimasi kasar: ~0.05 detik/gambar/epoch di CPU
     est_minutes = (epochs * sec_per_epoch) / 60
     print(f"  Estimasi waktu (CPU): ~{est_minutes:.0f} menit")
     print("  (Lebih cepat jika ada GPU)")
-    print("─" * 60)
+    print("-" * 60)
 
     confirm = input("\n  Mulai training? [y/N]: ").strip().lower()
     if confirm != "y":
