@@ -93,8 +93,12 @@ Ini akan menginstall `ultralytics` (YOLOv8), `opencv-python`, dan `numpy`.
 ### Langkah 3.5 — Download Dataset (Penting!)
 Project ini mendeteksi buah berdasarkan dataset khusus. Karena ukurannya besar, dataset ini tidak disertakan di GitHub.
 
-Silakan unduh dataset dari tautan berikut:
-**👉 [Download Dataset Fruits dari Roboflow](https://universe.roboflow.com/ece4078group308/fruits-uhv2q/dataset/3)**
+Terdapat dua pilihan dataset yang bisa Anda gunakan (silakan pilih salah satu):
+
+1. **👉 [Dataset Kedua (Direkomendasikan)](https://universe.roboflow.com/models/object-detection)**
+   *(Lebih ringan dan sangat disarankan untuk latihan/uji coba agar proses lebih cepat dan tidak membebani komputer).*
+2. **👉 [Dataset Pertama (Tidak Disarankan)](https://universe.roboflow.com/ece4078group308/fruits-uhv2q/dataset/3)**
+   *(Dataset bawaan yang ukurannya sangat berat, tidak disarankan kecuali komputer Anda memiliki spesifikasi tinggi).*
 
 **Cara Memasukkan Dataset:**
 1. Buka tautan di atas dan unduh dataset dengan format **YOLOv8**.
