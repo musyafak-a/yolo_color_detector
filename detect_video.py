@@ -46,47 +46,71 @@ def run(source: str, model_path: str, conf: float, save_dir: str = "output"):
 
     print(f"\nMemproses video: {source}")
     print(f"Resolusi: {width}x{height} | FPS: {fps:.1f}")
-    print(f"Tekan 'q' pada jendela video untuk berhenti memproses.\n")
+    print("Tombol kontrol (pastikan klik jendela video dulu):")
+    print("  'q'     : Berhenti / Keluar")
+    print("  'p'/' ' : Pause / Play")
+    print("  'd'     : Skip maju 10 detik")
+    print("  'a'     : Skip mundur 10 detik\n")
+
+    is_paused = False
+    frame_to_display = None
 
     while True:
-        ret, frame = cap.read()
-        if not ret:
-            print("Selesai memproses seluruh video.")
-            break
+        if not is_paused:
+            ret, frame = cap.read()
+            if not ret:
+                print("Selesai memproses seluruh video.")
+                break
 
-        results = model.predict(frame, conf=conf, verbose=False)[0]
+            results = model.predict(frame, conf=conf, verbose=False)[0]
 
-        for box in results.boxes:
-            x1, y1, x2, y2 = map(int, box.xyxy[0])
-            cls_id = int(box.cls[0])
-            class_name = model.names[cls_id]
-            confidence = float(box.conf[0])
+            for box in results.boxes:
+                x1, y1, x2, y2 = map(int, box.xyxy[0])
+                cls_id = int(box.cls[0])
+                class_name = model.names[cls_id]
+                confidence = float(box.conf[0])
 
-            # Hindari error jika koordinat box melebihi ukuran gambar
-            crop = frame[max(0, y1):y2, max(0, x1):x2]
-            
-            # Abaikan jika crop kosong
-            if crop.size == 0:
-                continue
+                # Hindari error jika koordinat box melebihi ukuran gambar
+                crop = frame[max(0, y1):y2, max(0, x1):x2]
                 
-            color_name = detect_dominant_color(crop)
+                # Abaikan jika crop kosong
+                if crop.size == 0:
+                    continue
+                    
+                color_name = detect_dominant_color(crop)
 
-            label = f"{class_name} ({color_name}) {confidence:.2f}"
+                label = f"{class_name} ({color_name}) {confidence:.2f}"
 
-            cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
-            cv2.putText(
-                frame, label, (x1, max(20, y1 - 10)),
-                cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2
-            )
+                cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
+                cv2.putText(
+                    frame, label, (x1, max(20, y1 - 10)),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2
+                )
 
-        # Simpan frame ke file output
-        out.write(frame)
+            # Simpan frame ke file output (hanya jika video berjalan)
+            out.write(frame)
+            frame_to_display = frame
 
         # Tampilkan di layar
-        cv2.imshow("Deteksi Objek + Warna (Video)", frame)
-        if cv2.waitKey(1) & 0xFF == ord("q"):
+        if frame_to_display is not None:
+            cv2.imshow("Deteksi Objek + Warna (Video)", frame_to_display)
+        
+        delay = 0 if is_paused else 1
+        key = cv2.waitKey(delay) & 0xFF
+        
+        if key == ord("q"):
             print("Proses dihentikan oleh pengguna.")
             break
+        elif key == ord("p") or key == 32: # 'p' atau Spasi
+            is_paused = not is_paused
+        elif key == ord("d"): # skip maju 10s
+            current_frame = cap.get(cv2.CAP_PROP_POS_FRAMES)
+            cap.set(cv2.CAP_PROP_POS_FRAMES, current_frame + 10 * fps)
+            is_paused = False
+        elif key == ord("a"): # skip mundur 10s
+            current_frame = cap.get(cv2.CAP_PROP_POS_FRAMES)
+            cap.set(cv2.CAP_PROP_POS_FRAMES, max(0, current_frame - 10 * fps))
+            is_paused = False
 
     cap.release()
     out.release()
