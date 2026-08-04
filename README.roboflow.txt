@@ -1,8 +1,8 @@
 
-fruit - v1 2024-02-18 7:35pm
+fruit  - v2 2023-09-20 1:33pm
 ==============================
 
-This dataset was exported via roboflow.com on October 11, 2025 at 12:12 PM GMT
+This dataset was exported via roboflow.com on September 20, 2023 at 4:36 AM GMT
 
 Roboflow is an end-to-end computer vision platform that helps you
 * collaborate with your team on computer vision projects
@@ -17,16 +17,13 @@ visit https://github.com/roboflow/notebooks
 
 To find over 100k other datasets and pre-trained models, visit https://universe.roboflow.com
 
-The dataset includes 660 images.
-Apple are annotated in YOLOv8 format.
+The dataset includes 117 images.
+Apple-pear-grapes-fig-watermelon-orange-peach-blueberry-strawberry-kiwi-banana-pineapple-grapefruit-cherrytomato are annotated in YOLOv8 format.
 
 The following pre-processing was applied to each image:
 * Auto-orientation of pixel data (with EXIF-orientation stripping)
 * Resize to 640x640 (Stretch)
 
 The following augmentation was applied to create 3 versions of each source image:
-* 50% probability of horizontal flip
-* Equal probability of one of the following 90-degree rotations: none, clockwise, counter-clockwise
-* Randomly crop between 0 and 20 percent of the image
 
 
