@@ -68,7 +68,13 @@ def run(source: str, model_path: str, conf: float, save_dir: str = "output"):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Deteksi objek + warna pada gambar")
     parser.add_argument("--source", required=True, help="Path ke file gambar")
-    parser.add_argument("--model", default="yolov8n.pt", help="Path/nama model YOLO")
+    default_model = "best.pt"
+    if not os.path.exists(default_model):
+        default_model = "runs/detect/custom_train/weights/best.pt"
+        if not os.path.exists(default_model):
+            default_model = "yolov8n.pt"
+
+    parser.add_argument("--model", default=default_model, help="Path/nama model YOLO")
     parser.add_argument("--conf", type=float, default=0.4, help="Confidence threshold")
     args = parser.parse_args()
 

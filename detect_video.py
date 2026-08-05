@@ -245,10 +245,16 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Deteksi objek + warna pada video")
     parser.add_argument("--source", required=True,
                         help="Path ke file video (contoh: video.mp4)")
-    parser.add_argument("--model", default="yolov8n.pt",
-                        help="Path/nama model YOLO")
-    parser.add_argument("--conf", type=float, default=0.15,
-                        help="Confidence threshold (default: 0.15)")
+    default_model = "best.pt"
+    if not os.path.exists(default_model):
+        default_model = "runs/detect/custom_train/weights/best.pt"
+        if not os.path.exists(default_model):
+            default_model = "yolov8n.pt"
+
+    parser.add_argument("--model", default=default_model,
+                        help=f"Path/nama model YOLO (default: {default_model})")
+    parser.add_argument("--conf", type=float, default=0.25,
+                        help="Confidence threshold (default: 0.25)")
     parser.add_argument("--imgsz", type=int, default=1280,
                         help="Resolusi inferensi (default: 1280)")
     parser.add_argument("--iou", type=float, default=0.3,
